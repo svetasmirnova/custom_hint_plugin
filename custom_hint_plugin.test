@@ -1,0 +1,75 @@
+install plugin custom_hint_plugin soname 'custom_hint_plugin.so'; 
+
+create table t1(f1 int, f2 int);
+create table t2(f1 int, f2 int);
+
+insert into t1 values(1,1), (2,2), (3,3), (4,4), (5,5), (6,6), (7,7), (8,8), (9,9);
+insert into t2 values(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9),
+                     (2,1), (2,2), (2,3), (2,4), (2,5), (2,6), (2,7), (2,8), (2,9),
+                     (3,1), (3,2), (3,3), (3,4), (3,5), (3,6), (3,7), (3,8), (3,9);
+
+--connect (addconnroot,localhost,root,,test,,)
+connection default;
+
+--send select /*+ join_buffer_size=10240 */ count(*), sleep(1) from t1 join t2 using(f1)
+connection addconnroot;
+select * from performance_schema.variables_by_thread where variable_name in ('join_buffer_size');
+connection default;
+--reap
+
+--send select /*+ join_buffer_size=10240 tmp_table_size=1024 */ count(*), sleep(1) from t1 join t2 using(f1)
+connection addconnroot;
+select * from performance_schema.variables_by_thread where variable_name in ('join_buffer_size');
+connection default;
+--reap
+
+--send select /*+ join_buffer_size=10240 tmp_table_size=1024 max_heap_table_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)
+connection addconnroot;
+select * from performance_schema.variables_by_thread where variable_name in ('join_buffer_size');
+connection default;
+--reap
+
+--send select /*+ BKA(t1) NO_BKA(t2) join_buffer_size=10240 tmp_table_size=1024 */ count(*), sleep(1) from t1 join t2 using(f1)
+connection addconnroot;
+select * from performance_schema.variables_by_thread where variable_name in ('join_buffer_size');
+connection default;
+--reap
+
+--send select /*+ BKA(t1) NO_BKA(t2) join_buffer_size=10240 */ count(*), sleep(1) from t1 join t2 using(f1)
+connection addconnroot;
+select * from performance_schema.variables_by_thread where variable_name in ('join_buffer_size');
+connection default;
+--reap
+
+--send select /*+ join_buffer_size=10240 BKA(t1) NO_BKA(t2) */ count(*), sleep(1) from t1 join t2 using(f1)
+connection addconnroot;
+select * from performance_schema.variables_by_thread where variable_name in ('join_buffer_size');
+connection default;
+--reap
+
+--send select /*+join_buffer_size=10240 */ count(*), sleep(1) from t1 join t2 using(f1)
+connection addconnroot;
+select * from performance_schema.variables_by_thread where variable_name in ('join_buffer_size');
+connection default;
+--reap
+
+--send select /*+ join_buffer_size=10240*/ count(*), sleep(1) from t1 join t2 using(f1)
+connection addconnroot;
+select * from performance_schema.variables_by_thread where variable_name in ('join_buffer_size');
+connection default;
+--reap
+
+--send select /*+ join_buffer_size=10240K */ count(*), sleep(1) from t1 join t2 using(f1)
+connection addconnroot;
+select * from performance_schema.variables_by_thread where variable_name in ('join_buffer_size');
+connection default;
+--reap
+
+--send select /*+ ajoin_buffer_size=10240 */ count(*), sleep(1) from t1 join t2 using(f1)
+connection addconnroot;
+select * from performance_schema.variables_by_thread where variable_name in ('join_buffer_size');
+connection default;
+--reap
+
+uninstall plugin custom_hint_plugin;
+

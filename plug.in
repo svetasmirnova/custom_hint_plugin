@@ -1,0 +1,5 @@
+MYSQL_PLUGIN(custom_hint_plugin, [Custom Optimizer hints for MySQL (not available with standard "Optimizer Hints" feature)]),
+                              [Custom Optimizer hints for MySQL]
+MYSQL_PLUGIN_DYNAMIC(custom_hint_plugin, [custom_hint_plugin.la])
+MYSQL_PLUGIN_STATIC(custom_hint_plugin, [custom_hint_plugin.a])
+
