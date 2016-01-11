@@ -101,7 +101,11 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
   if (event_parse->event_subclass == MYSQL_AUDIT_PARSE_PREPARSE)
   {
 
-  regex custom_hint_clause("(\\w+\\s+/\\*\\+\\s+(.*\\s+)*)((join_buffer_size|tmp_table_size|max_heap_table_size|read_buffer_size|read_rnd_buffer_size|sort_buffer_size|bulk_insert_buffer_size|preload_buffer_size)\\s*=\\s*(\\d+))+(\\s+(.*\\s+)*\\*/.*)", ECMAScript | icase);
+  /* 
+  There are expected limitations for this regex:
+  all custom hints must be specified first if you want to use them together with built-in hints
+  */
+  regex custom_hint_clause("(\\w+\\s+/\\*\\+\\s+([^(join_buffer_size|tmp_table_size|max_heap_table_size|read_buffer_size|read_rnd_buffer_size|sort_buffer_size|bulk_insert_buffer_size|preload_buffer_size)].*\\s+)*)(((join_buffer_size|tmp_table_size|max_heap_table_size|read_buffer_size|read_rnd_buffer_size|sort_buffer_size|bulk_insert_buffer_size|preload_buffer_size)\\s*=\\s*\\d+)+)(\\s+([^(join_buffer_size|tmp_table_size|max_heap_table_size|read_buffer_size|read_rnd_buffer_size|sort_buffer_size|bulk_insert_buffer_size|preload_buffer_size)]*.*\\s+)*\\*/.*)", ECMAScript | icase);
   cmatch sm;
 
   cerr << "Before regex_match: " << event_parse->query.str << endl;
@@ -118,42 +122,56 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
     }
     cout << endl;
     
-    switch(get_hint_switch(sm[4]))
+    regex matches("(join_buffer_size|tmp_table_size|max_heap_table_size|read_buffer_size|read_rnd_buffer_size|sort_buffer_size|bulk_insert_buffer_size|preload_buffer_size)\\s*=\\s*(\\d+)", ECMAScript | icase);
+    string subpart= sm[3];
+    smatch ssm;
+    while (regex_match(subpart, ssm, matches))
     {
-      case JOIN_BUFFER_SIZE:
-        current[JOIN_BUFFER_SIZE]= thd->variables.join_buff_size;
-        thd->variables.join_buff_size= stoull(sm[5]);
-        break;
-      case TMP_TABLE_SIZE:
-        current[TMP_TABLE_SIZE]= thd->variables.tmp_table_size;
-        thd->variables.tmp_table_size= stoull(sm[5]);
-        break;
-      case MAX_HEAP_TABLE_SIZE:
-        current[MAX_HEAP_TABLE_SIZE]= thd->variables.max_heap_table_size;
-        thd->variables.max_heap_table_size= stoull(sm[5]);
-        break;
-      case READ_BUFFER_SIZE:
-        current[READ_BUFFER_SIZE]= thd->variables.read_buff_size;
-        thd->variables.read_buff_size= stoull(sm[5]);
-        break;
-      case READ_RND_BUFFER_SIZE:
-        current[JOIN_BUFFER_SIZE]= thd->variables.read_rnd_buff_size;
-        thd->variables.read_rnd_buff_size= stoull(sm[5]);
-        break;
-      case SORT_BUFFER_SIZE:
-        current[SORT_BUFFER_SIZE]= thd->variables.sortbuff_size;
-        thd->variables.sortbuff_size= stoull(sm[5]);
-        break;
-      case BULK_INSERT_BUFFER_SIZE:
-        current[BULK_INSERT_BUFFER_SIZE]= thd->variables.bulk_insert_buff_size;
-        thd->variables.bulk_insert_buff_size= stoull(sm[5]);
-        break;
-      case PRELOAD_BUFFER_SIZE:
-        current[PRELOAD_BUFFER_SIZE]= thd->variables.preload_buff_size;
-        thd->variables.preload_buff_size= stoull(sm[5]);
-        break;
-      default:
-        cerr << sm[3] << "=" << sm[4] << endl;
+      cout << "innder match" << endl;
+      
+      for (unsigned i=0; i < ssm.size(); ++i) {
+        std::cout << i << "[" << ssm[i] << "] ";
+      }
+      cout << endl;
+      
+      switch(get_hint_switch(ssm[1]))
+      {
+        case JOIN_BUFFER_SIZE:
+          current[JOIN_BUFFER_SIZE]= thd->variables.join_buff_size;
+          thd->variables.join_buff_size= stoull(ssm[2]);
+          break;
+        case TMP_TABLE_SIZE:
+          current[TMP_TABLE_SIZE]= thd->variables.tmp_table_size;
+          thd->variables.tmp_table_size= stoull(ssm[2]);
+          break;
+        case MAX_HEAP_TABLE_SIZE:
+          current[MAX_HEAP_TABLE_SIZE]= thd->variables.max_heap_table_size;
+          thd->variables.max_heap_table_size= stoull(ssm[2]);
+          break;
+        case READ_BUFFER_SIZE:
+          current[READ_BUFFER_SIZE]= thd->variables.read_buff_size;
+          thd->variables.read_buff_size= stoull(ssm[2]);
+          break;
+        case READ_RND_BUFFER_SIZE:
+          current[JOIN_BUFFER_SIZE]= thd->variables.read_rnd_buff_size;
+          thd->variables.read_rnd_buff_size= stoull(ssm[2]);
+          break;
+        case SORT_BUFFER_SIZE:
+          current[SORT_BUFFER_SIZE]= thd->variables.sortbuff_size;
+          thd->variables.sortbuff_size= stoull(ssm[2]);
+          break;
+        case BULK_INSERT_BUFFER_SIZE:
+          current[BULK_INSERT_BUFFER_SIZE]= thd->variables.bulk_insert_buff_size;
+          thd->variables.bulk_insert_buff_size= stoull(ssm[2]);
+          break;
+        case PRELOAD_BUFFER_SIZE:
+          current[PRELOAD_BUFFER_SIZE]= thd->variables.preload_buff_size;
+          thd->variables.preload_buff_size= stoull(ssm[2]);
+          break;
+        default:
+          cerr << ssm[3] << "=" << ssm[1] << endl;
+      }
+      break;
     }
     
     //erase first if set, better in the beginning, before regex
