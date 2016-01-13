@@ -105,7 +105,8 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
   There are expected limitations for this regex:
   all custom hints must be specified first if you want to use them together with built-in hints
   */
-  regex custom_hint_clause("(\\w+\\s+/\\*\\+\\s+([^(join_buffer_size|tmp_table_size|max_heap_table_size|read_buffer_size|read_rnd_buffer_size|sort_buffer_size|bulk_insert_buffer_size|preload_buffer_size)].*\\s+)*)(((join_buffer_size|tmp_table_size|max_heap_table_size|read_buffer_size|read_rnd_buffer_size|sort_buffer_size|bulk_insert_buffer_size|preload_buffer_size)\\s*=\\s*\\d+)+)(\\s+([^(join_buffer_size|tmp_table_size|max_heap_table_size|read_buffer_size|read_rnd_buffer_size|sort_buffer_size|bulk_insert_buffer_size|preload_buffer_size)]*.*\\s+)*\\*/.*)", ECMAScript | icase);
+  string hints= "join_buffer_size|tmp_table_size|max_heap_table_size|read_buffer_size|read_rnd_buffer_size|sort_buffer_size|bulk_insert_buffer_size|preload_buffer_size";
+  regex custom_hint_clause("(\\w+\\s+/\\*\\+\\s+([^(" + hints + ")].*\\s+)*)(((" + hints + ")\\s*=\\s*\\d+\\s+)+)((.*)\\*/.*)", ECMAScript | icase);
   cmatch sm;
 
   cerr << "Before regex_match: " << event_parse->query.str << endl;
@@ -122,7 +123,7 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
     }
     cout << endl;
     
-    regex matches("(join_buffer_size|tmp_table_size|max_heap_table_size|read_buffer_size|read_rnd_buffer_size|sort_buffer_size|bulk_insert_buffer_size|preload_buffer_size)\\s*=\\s*(\\d+)", ECMAScript | icase);
+    regex matches("\\s*(" + hints + ")\\s*=\\s*(\\d+)(.*)*", ECMAScript | icase);
     string subpart= sm[3];
     smatch ssm;
     while (regex_match(subpart, ssm, matches))
@@ -169,9 +170,9 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
           thd->variables.preload_buff_size= stoull(ssm[2]);
           break;
         default:
-          cerr << ssm[3] << "=" << ssm[1] << endl;
+          cerr << ssm[1] << "=" << ssm[2] << endl;
       }
-      break;
+      subpart= ssm[3]; //regex_replace(subpart, matches, "$3");
     }
     
     //erase first if set, better in the beginning, before regex
