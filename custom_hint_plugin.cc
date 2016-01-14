@@ -281,8 +281,18 @@ supported_hints_t get_hint_switch(string hint)
     return JOIN_BUFFER_SIZE;
   if (0 == hint.compare("tmp_table_size"))
     return TMP_TABLE_SIZE;
+  if (0 == hint.compare("max_heap_table_size"))
+    return MAX_HEAP_TABLE_SIZE;
   if (0 == hint.compare("read_buffer_size"))
     return READ_BUFFER_SIZE;
+  if (0 == hint.compare("read_rnd_buffer_size"))
+    return READ_RND_BUFFER_SIZE;
+  if (0 == hint.compare("sort_buffer_size"))
+    return SORT_BUFFER_SIZE;
+  if (0 == hint.compare("bulk_insert_buffer_size"))
+    return BULK_INSERT_BUFFER_SIZE;
+  if (0 == hint.compare("preload_buffer_size"))
+    return PRELOAD_BUFFER_SIZE;
   return NOT_SUPPORTED;
 };
 
