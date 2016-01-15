@@ -162,8 +162,8 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
     //erase first if set, better in the beginning, before regex
     modified_variables[thd->thread_id()]= current;
     
-    string rewritten_query;
-    rewritten_query= regex_replace(event_parse->query.str, custom_hint_clause, "$1$6");
+    string temp= event_parse->query.str;
+    string rewritten_query= regex_replace(temp, custom_hint_clause, "$1$6", format_default);
     _rewrite_query(event, event_parse, rewritten_query.c_str());
   }
 
