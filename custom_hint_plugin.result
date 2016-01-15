@@ -26,7 +26,7 @@ Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ max_heap_table_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
 select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('max_heap_table_size') and processlist_id=3;
 VARIABLE_NAME	VARIABLE_VALUE
-max_heap_table_size	16384
+max_heap_table_size	1048576
 count(*)	sleep(1)
 27	0
 Warnings:
@@ -155,6 +155,7 @@ count(*)	sleep(1)
 27	0
 Warnings:
 Warning	1064	Optimizer hint syntax error near 'ajoin_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' at line 1
+drop table t1, t2;
 uninstall plugin custom_hint_plugin;
 Warnings:
 Warning	1620	Plugin is busy and will be uninstalled on shutdown

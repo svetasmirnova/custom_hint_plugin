@@ -115,5 +115,6 @@ connection addconnroot;
 connection default;
 --reap
 
+drop table t1, t2;
 uninstall plugin custom_hint_plugin;
 

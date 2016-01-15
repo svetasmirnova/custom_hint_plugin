@@ -109,32 +109,15 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
   regex custom_hint_clause("(\\w+\\s+/\\*\\+\\s+([^(" + hints + ")].*\\s+)*)(((" + hints + ")\\s*=\\s*\\d+\\s+)+)((.*)\\*/.*)", ECMAScript | icase);
   cmatch sm;
 
-  cerr << "Before regex_match: " << event_parse->query.str << endl;
-  cerr << "Thread id: " << thd->thread_id() << endl;
-
   if (regex_match(event_parse->query.str, sm, custom_hint_clause))
   {
-    //replace $1$5
-    cerr << "We have a match" << endl;
     std::map<supported_hints_t, ulonglong> current;
-    
-    for (unsigned i=0; i < sm.size(); ++i) {
-      std::cout << i << "[" << sm[i] << "] ";
-    }
-    cout << endl;
-    
+
     regex matches("\\s*(" + hints + ")\\s*=\\s*(\\d+)(.*)*", ECMAScript | icase);
     string subpart= sm[3];
     smatch ssm;
     while (regex_match(subpart, ssm, matches))
     {
-      cout << "innder match" << endl;
-      
-      for (unsigned i=0; i < ssm.size(); ++i) {
-        std::cout << i << "[" << ssm[i] << "] ";
-      }
-      cout << endl;
-      
       switch(get_hint_switch(ssm[1]))
       {
         case JOIN_BUFFER_SIZE:
@@ -170,7 +153,8 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
           thd->variables.preload_buff_size= stoull(ssm[2]);
           break;
         default:
-          cerr << ssm[1] << "=" << ssm[2] << endl;
+          my_plugin_log_message(&plugin_info_ptr, MY_INFORMATION_LEVEL, "Not supported yet");
+          //cerr << ssm[1] << "=" << ssm[2] << endl;
       }
       subpart= ssm[3]; //regex_replace(subpart, matches, "$3");
     }
@@ -181,23 +165,17 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
     string rewritten_query;
     rewritten_query= regex_replace(event_parse->query.str, custom_hint_clause, "$1$6");
     _rewrite_query(event, event_parse, rewritten_query.c_str());
-    
-    cerr << "Rewritten query: " << rewritten_query << endl;
   }
 
   }
   
   if (event_general->event_subclass == MYSQL_AUDIT_GENERAL_RESULT)
   {
-    cerr << "Catching result set" << endl;
     std::map<my_thread_id, std::map<supported_hints_t, ulonglong> >::iterator current= modified_variables.find(thd->thread_id());
     if (current != modified_variables.end())
     {
-       cerr << "Map exists" << endl;
-       
        for (std::map<supported_hints_t, ulonglong>::iterator it= current->second.begin(); it!= current->second.end(); ++it)
        {
-         cerr << it->first << ": " << it->second << endl;
          switch(it->first)
          {
          case JOIN_BUFFER_SIZE:
@@ -225,7 +203,8 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
            thd->variables.preload_buff_size= it->second;
            break;
          default:
-           cerr << "Not supported yet" << endl;
+           my_plugin_log_message(&plugin_info_ptr, MY_INFORMATION_LEVEL, "Not supported yet");
+           //cerr << "Not supported yet" << endl;
          }
        }
        
@@ -237,9 +216,9 @@ static int custom_hint(MYSQL_THD thd, mysql_event_class_t event_class,
 }
 
 static st_mysql_audit custom_hint_plugin_descriptor= {
-  MYSQL_AUDIT_INTERFACE_VERSION,  /* interface version */
+  MYSQL_AUDIT_INTERFACE_VERSION,        /* interface version */
   NULL,
-  custom_hint,                         /* implements custom hints */
+  custom_hint,                          /* implements custom hints */
   { (unsigned long) MYSQL_AUDIT_GENERAL_ALL, 0, (unsigned long) MYSQL_AUDIT_PARSE_ALL,}
 };
 
