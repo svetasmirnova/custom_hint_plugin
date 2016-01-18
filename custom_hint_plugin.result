@@ -2,157 +2,158 @@ install plugin custom_hint_plugin soname 'custom_hint_plugin.so';
 create table t1(f1 int, f2 int);
 create table t2(f1 int, f2 int);
 insert into t1 values(1,1), (2,2), (3,3), (4,4), (5,5), (6,6), (7,7), (8,8), (9,9);
+insert into t1 values(1,1), (2,2), (3,3), (4,4), (5,5), (6,6), (7,7), (8,8), (9,9);
 insert into t2 values(1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (1,8), (1,9),
 (2,1), (2,2), (2,3), (2,4), (2,5), (2,6), (2,7), (2,8), (2,9),
 (3,1), (3,2), (3,3), (3,4), (3,5), (3,6), (3,7), (3,8), (3,9);
 select /*+ join_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 join_buffer_size	16384
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ join_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ tmp_table_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('tmp_table_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('tmp_table_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 tmp_table_size	16384
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ tmp_table_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ max_heap_table_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('max_heap_table_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('max_heap_table_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 max_heap_table_size	16384
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ max_heap_table_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ read_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('read_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('read_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 read_buffer_size	16384
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ read_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ read_rnd_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('read_rnd_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('read_rnd_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 read_rnd_buffer_size	16384
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ read_rnd_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ sort_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('sort_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('sort_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 sort_buffer_size	16384
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ sort_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ bulk_insert_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('bulk_insert_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('bulk_insert_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 bulk_insert_buffer_size	16384
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ bulk_insert_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ preload_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('preload_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('preload_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 preload_buffer_size	16384
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ preload_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ join_buffer_size=16384 tmp_table_size=1024 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size', 'tmp_table_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size', 'tmp_table_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 join_buffer_size	16384
 tmp_table_size	1024
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ join_buffer_size=16384 tmp_table_size=1024 */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ join_buffer_size=16384 tmp_table_size=1024 max_heap_table_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size', 'tmp_table_size', 'max_heap_table_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size', 'tmp_table_size', 'max_heap_table_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 join_buffer_size	16384
 max_heap_table_size	16384
 tmp_table_size	1024
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ join_buffer_size=16384 tmp_table_size=1024 max_heap_table_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 Warning	1064	Optimizer hint syntax error near '*/' at line 1
 select /*+ BKA(t1) NO_BKA(t2) join_buffer_size=16384 tmp_table_size=1024 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size', 'tmp_table_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size', 'tmp_table_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 join_buffer_size	262144
 tmp_table_size	16777216
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Warning	1064	Optimizer hint syntax error near 'join_buffer_size=16384 tmp_table_size=1024 */ count(*), sleep(1) from t1 join t2' at line 1
 select /*+ BKA(t1) NO_BKA(t2) join_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 join_buffer_size	262144
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Warning	1064	Optimizer hint syntax error near 'join_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' at line 1
 select /*+ join_buffer_size=16384 BKA(t1) NO_BKA(t2) */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 join_buffer_size	16384
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Note	1105	Query 'select /*+ join_buffer_size=16384 BKA(t1) NO_BKA(t2) */ count(*), sleep(1) from t1 join t2 using(f1)' rewritten to 'select /*+ BKA(t1) NO_BKA(t2) */ count(*), sleep(1) from t1 join t2 using(f1)' by a query rewrite plugin
 select /*+join_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 join_buffer_size	262144
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Warning	1064	Optimizer hint syntax error near 'join_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' at line 1
 select /*+ join_buffer_size=16384*/ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 join_buffer_size	262144
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Warning	1064	Optimizer hint syntax error near 'join_buffer_size=16384*/ count(*), sleep(1) from t1 join t2 using(f1)' at line 1
 select /*+ join_buffer_size=16384K */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 join_buffer_size	262144
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Warning	1064	Optimizer hint syntax error near 'join_buffer_size=16384K */ count(*), sleep(1) from t1 join t2 using(f1)' at line 1
 select /*+ ajoin_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1);
-select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id=3;
+select VARIABLE_NAME, VARIABLE_VALUE from performance_schema.variables_by_thread join performance_schema.threads using(thread_id) where variable_name in ('join_buffer_size') and processlist_id<thread_id>;
 VARIABLE_NAME	VARIABLE_VALUE
 join_buffer_size	262144
 count(*)	sleep(1)
-27	0
+54	0
 Warnings:
 Warning	1064	Optimizer hint syntax error near 'ajoin_buffer_size=16384 */ count(*), sleep(1) from t1 join t2 using(f1)' at line 1
 drop table t1, t2;
